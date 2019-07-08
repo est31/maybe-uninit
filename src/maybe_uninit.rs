@@ -1,5 +1,6 @@
 //use core::intrinsics;
 use core::mem::ManuallyDrop;
+use core::ptr;
 
 /// A wrapper type to construct uninitialized instances of `T`.
 ///
@@ -283,7 +284,7 @@ impl<T: Copy> MaybeUninit<T> {
     pub fn zeroed() -> MaybeUninit<T> {
         let mut u = MaybeUninit::<T>::uninit();
         unsafe {
-            u.as_mut_ptr().write_bytes(0u8, 1);
+            ptr::write_bytes(u.as_mut_ptr(), 0u8, 1);
         }
         u
     }
