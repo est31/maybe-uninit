@@ -603,3 +603,22 @@ impl<T> MaybeUninit<T> {
         this as *mut [MaybeUninit<T>] as *mut T
     }*/
 }
+
+
+
+#[cfg(test)]
+mod tests{
+    use super::*;
+
+    #[test]
+    fn doesnt_drop(){
+        unsafe{
+            use std::sync::Arc;
+            let arc=Arc::new(0);
+            let maybe=MaybeUninit::new(arc.clone());
+            assert_eq!(Arc::strong_count(&*maybe.as_ptr()), 2);
+            drop(maybe);
+            assert_eq!(Arc::strong_count(&arc), 2);
+        }
+    }
+}
