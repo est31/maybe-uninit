@@ -219,7 +219,7 @@ use core::mem::uninitialized;
 /// value is valid for a `MaybeUninit<T>` the compiler can't apply non-zero/niche-filling
 /// optimizations, potentially resulting in a larger size:
 ///
-/// ```rust
+/// ```no_run
 /// # extern crate maybe_uninit;
 /// # fn main() {
 /// # use maybe_uninit::MaybeUninit;
