@@ -4,5 +4,6 @@ version = "0.5.0"
 description = "MaybeUninit for older versions of Rust"
 authors = ["est31 <MTest31@outlook.com>", "The Rust Project Developers"]
 license = "Apache-2.0 OR MIT"
+readme = "README.md"
 
 [dependencies]
