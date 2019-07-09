@@ -1,6 +1,7 @@
 //use core::intrinsics;
 use core::mem::ManuallyDrop;
 use core::ptr;
+use core::mem::uninitialized;
 
 /// A wrapper type to construct uninitialized instances of `T`.
 ///
@@ -240,8 +241,7 @@ use core::ptr;
 /// the same size, alignment, and ABI as `T`; it's just that the way `MaybeUninit` implements that
 /// guarantee may evolve.
 #[derive(Copy)]
-pub union MaybeUninit<T: Copy> {
-    uninit: (),
+pub struct MaybeUninit<T> {
     value: ManuallyDrop<T>,
 }
 
@@ -253,7 +253,7 @@ impl<T: Copy> Clone for MaybeUninit<T> {
     }
 }
 
-impl<T: Copy> MaybeUninit<T> {
+impl<T> MaybeUninit<T> {
     /// Creates a new `MaybeUninit<T>` initialized with the given value.
     /// It is safe to call [`assume_init`] on the return value of this function.
     ///
@@ -276,7 +276,7 @@ impl<T: Copy> MaybeUninit<T> {
     /// [type]: union.MaybeUninit.html
     #[inline(always)]
     pub fn uninit() -> MaybeUninit<T> {
-        MaybeUninit { uninit: () }
+        unsafe { MaybeUninit { value: uninitialized() } }
     }
 
     /// Creates a new `MaybeUninit<T>` in an uninitialized state, with the memory being
