@@ -112,10 +112,11 @@ use core::mem::uninitialized;
 /// # extern crate maybe_uninit;
 /// # fn main() {
 /// use maybe_uninit::MaybeUninit;
+/// use std::ptr;
 ///
 /// unsafe fn make_vec(out: *mut Vec<i32>) {
 ///     // `write` does not drop the old contents, which is important.
-///     out.write(vec![1, 2, 3]);
+///     ptr::write(out, vec![1, 2, 3]);
 /// }
 ///
 /// let mut v = MaybeUninit::uninit();
@@ -358,9 +359,10 @@ impl<T> MaybeUninit<T> {
     /// # extern crate maybe_uninit;
     /// # fn main() {
     /// use maybe_uninit::MaybeUninit;
+    /// use std::ptr;
     ///
     /// let mut x = MaybeUninit::<Vec<u32>>::uninit();
-    /// unsafe { x.as_mut_ptr().write(vec![0,1,2]); }
+    /// unsafe { ptr::write(x.as_mut_ptr(), vec![0,1,2]); }
     /// // Create a reference into the `MaybeUninit<T>`. This is okay because we initialized it.
     /// let x_vec = unsafe { &*x.as_ptr() };
     /// assert_eq!(x_vec.len(), 3);
@@ -398,9 +400,10 @@ impl<T> MaybeUninit<T> {
     /// # extern crate maybe_uninit;
     /// # fn main() {
     /// use maybe_uninit::MaybeUninit;
+    /// use std::ptr;
     ///
     /// let mut x = MaybeUninit::<Vec<u32>>::uninit();
-    /// unsafe { x.as_mut_ptr().write(vec![0,1,2]); }
+    /// unsafe { ptr::write(x.as_mut_ptr(), vec![0,1,2]); }
     /// // Create a reference into the `MaybeUninit<Vec<u32>>`.
     /// // This is okay because we initialized it.
     /// let x_vec = unsafe { &mut *x.as_mut_ptr() };
