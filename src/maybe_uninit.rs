@@ -14,11 +14,15 @@ use core::ptr;
 /// ever gets used to access memory:
 ///
 /// ```rust,no_run
-/// use std::mem::{self, MaybeUninit};
+/// # extern crate maybe_uninit;
+/// # fn main() {
+/// use maybe_uninit::MaybeUninit;
+/// use std::mem;
 ///
 /// let x: &i32 = unsafe { mem::zeroed() }; // undefined behavior!
 /// // The equivalent code with `MaybeUninit<&i32>`:
 /// let x: &i32 = unsafe { MaybeUninit::zeroed().assume_init() }; // undefined behavior!
+/// # }
 /// ```
 ///
 /// This is exploited by the compiler for various optimizations, such as eliding
@@ -28,11 +32,15 @@ use core::ptr;
 /// always be `true` or `false`. Hence, creating an uninitialized `bool` is undefined behavior:
 ///
 /// ```rust,no_run
-/// use std::mem::{self, MaybeUninit};
+/// # extern crate maybe_uninit;
+/// # fn main() {
+/// use maybe_uninit::MaybeUninit;
+/// use std::mem;
 ///
 /// let b: bool = unsafe { mem::uninitialized() }; // undefined behavior!
 /// // The equivalent code with `MaybeUninit<bool>`:
 /// let b: bool = unsafe { MaybeUninit::uninit().assume_init() }; // undefined behavior!
+/// # }
 /// ```
 ///
 /// Moreover, uninitialized memory is special in that the compiler knows that
@@ -41,11 +49,15 @@ use core::ptr;
 /// which otherwise can hold any *fixed* bit pattern:
 ///
 /// ```rust,no_run
-/// use std::mem::{self, MaybeUninit};
+/// # extern crate maybe_uninit;
+/// # fn main() {
+/// use maybe_uninit::MaybeUninit;
+/// use std::mem;
 ///
 /// let x: i32 = unsafe { mem::uninitialized() }; // undefined behavior!
 /// // The equivalent code with `MaybeUninit<i32>`:
 /// let x: i32 = unsafe { MaybeUninit::uninit().assume_init() }; // undefined behavior!
+/// # }
 /// ```
 /// (Notice that the rules around uninitialized integers are not finalized yet, but
 /// until they are, it is advisable to avoid them.)
@@ -66,16 +78,20 @@ use core::ptr;
 /// be initialized:
 ///
 /// ```rust
-/// use std::mem::MaybeUninit;
+/// # extern crate maybe_uninit;
+/// # fn main() {
+/// use maybe_uninit::MaybeUninit;
+/// use std::ptr::write;
 ///
 /// // Create an explicitly uninitialized reference. The compiler knows that data inside
 /// // a `MaybeUninit<T>` may be invalid, and hence this is not UB:
 /// let mut x = MaybeUninit::<&i32>::uninit();
 /// // Set it to a valid value.
-/// unsafe { x.as_mut_ptr().write(&0); }
+/// unsafe { write(x.as_mut_ptr(), &0); }
 /// // Extract the initialized data -- this is only allowed *after* properly
 /// // initializing `x`!
 /// let x = unsafe { x.assume_init() };
+/// # }
 /// ```
 ///
 /// The compiler then knows to not make any incorrect assumptions or optimizations on this code.
@@ -92,7 +108,9 @@ use core::ptr;
 /// unnecessary moves.
 ///
 /// ```
-/// use std::mem::MaybeUninit;
+/// # extern crate maybe_uninit;
+/// # fn main() {
+/// use maybe_uninit::MaybeUninit;
 ///
 /// unsafe fn make_vec(out: *mut Vec<i32>) {
 ///     // `write` does not drop the old contents, which is important.
@@ -105,6 +123,7 @@ use core::ptr;
 /// // properly dropped.
 /// let v = unsafe { v.assume_init() };
 /// assert_eq!(&v, &[1, 2, 3]);
+/// # }
 /// ```
 ///
 /// ## Initializing an array element-by-element
@@ -112,7 +131,10 @@ use core::ptr;
 /// `MaybeUninit<T>` can be used to initialize a large array element-by-element:
 ///
 /// ```
-/// use std::mem::{self, MaybeUninit};
+/// # extern crate maybe_uninit;
+/// # fn main() {
+/// use maybe_uninit::MaybeUninit;
+/// use std::mem;
 /// use std::ptr;
 ///
 /// let data = {
@@ -135,13 +157,16 @@ use core::ptr;
 /// };
 ///
 /// assert_eq!(&data[0], &[42]);
+/// # }
 /// ```
 ///
 /// You can also work with partially initialized arrays, which could
 /// be found in low-level datastructures.
 ///
 /// ```
-/// use std::mem::MaybeUninit;
+/// # extern crate maybe_uninit;
+/// # fn main() {
+/// use maybe_uninit::MaybeUninit;
 /// use std::ptr;
 ///
 /// // Create an uninitialized array of `MaybeUninit`. The `assume_init` is
@@ -160,6 +185,7 @@ use core::ptr;
 /// for elem in &mut data[0..data_len] {
 ///     unsafe { ptr::drop_in_place(elem.as_mut_ptr()); }
 /// }
+/// # }
 /// ```
 ///
 /// ## Initializing a struct field-by-field
@@ -176,9 +202,13 @@ use core::ptr;
 /// `MaybeUninit<T>` is guaranteed to have the same size, alignment, and ABI as `T`:
 ///
 /// ```rust
-/// use std::mem::{MaybeUninit, size_of, align_of};
+/// # extern crate maybe_uninit;
+/// # fn main() {
+/// use maybe_uninit::MaybeUninit;
+/// use std::mem::{size_of, align_of};
 /// assert_eq!(size_of::<MaybeUninit<u64>>(), size_of::<u64>());
 /// assert_eq!(align_of::<MaybeUninit<u64>>(), align_of::<u64>());
+/// # }
 /// ```
 ///
 /// However remember that a type *containing* a `MaybeUninit<T>` is not necessarily the same
@@ -188,9 +218,13 @@ use core::ptr;
 /// optimizations, potentially resulting in a larger size:
 ///
 /// ```rust
-/// # use std::mem::{MaybeUninit, size_of};
+/// # extern crate maybe_uninit;
+/// # fn main() {
+/// # use maybe_uninit::MaybeUninit;
+/// # use std::mem::size_of;
 /// assert_eq!(size_of::<Option<bool>>(), 1);
 /// assert_eq!(size_of::<Option<MaybeUninit<bool>>>(), 2);
+/// # }
 /// ```
 ///
 /// If `T` is FFI-safe, then so is `MaybeUninit<T>`.
@@ -260,18 +294,23 @@ impl<T: Copy> MaybeUninit<T> {
     /// fields of the struct can hold the bit-pattern 0 as a valid value.
     ///
     /// ```rust
-    /// use std::mem::MaybeUninit;
+    /// # extern crate maybe_uninit;
+    /// # fn main() {
+    /// use maybe_uninit::MaybeUninit;
     ///
     /// let x = MaybeUninit::<(u8, bool)>::zeroed();
     /// let x = unsafe { x.assume_init() };
     /// assert_eq!(x, (0, false));
+    /// # }
     /// ```
     ///
     /// *Incorrect* usage of this function: initializing a struct with zero, where some fields
     /// cannot hold 0 as a valid value.
     ///
     /// ```rust,no_run
-    /// use std::mem::MaybeUninit;
+    /// # extern crate maybe_uninit;
+    /// # fn main() {
+    /// use maybe_uninit::MaybeUninit;
     ///
     /// enum NotZero { One = 1, Two = 2 };
     ///
@@ -279,6 +318,7 @@ impl<T: Copy> MaybeUninit<T> {
     /// let x = unsafe { x.assume_init() };
     /// // Inside a pair, we create a `NotZero` that does not have a valid discriminant.
     /// // This is undefined behavior.
+    /// # }
     /// ```
     #[inline]
     pub fn zeroed() -> MaybeUninit<T> {
@@ -314,23 +354,29 @@ impl<T: Copy> MaybeUninit<T> {
     /// Correct usage of this method:
     ///
     /// ```rust
-    /// use std::mem::MaybeUninit;
+    /// # extern crate maybe_uninit;
+    /// # fn main() {
+    /// use maybe_uninit::MaybeUninit;
     ///
     /// let mut x = MaybeUninit::<Vec<u32>>::uninit();
     /// unsafe { x.as_mut_ptr().write(vec![0,1,2]); }
     /// // Create a reference into the `MaybeUninit<T>`. This is okay because we initialized it.
     /// let x_vec = unsafe { &*x.as_ptr() };
     /// assert_eq!(x_vec.len(), 3);
+    /// # }
     /// ```
     ///
     /// *Incorrect* usage of this method:
     ///
     /// ```rust,no_run
-    /// use std::mem::MaybeUninit;
+    /// # extern crate maybe_uninit;
+    /// # fn main() {
+    /// use maybe_uninit::MaybeUninit;
     ///
     /// let x = MaybeUninit::<Vec<u32>>::uninit();
     /// let x_vec = unsafe { &*x.as_ptr() };
     /// // We have created a reference to an uninitialized vector! This is undefined behavior.
+    /// # }
     /// ```
     ///
     /// (Notice that the rules around references to uninitialized data are not finalized yet, but
@@ -348,7 +394,9 @@ impl<T: Copy> MaybeUninit<T> {
     /// Correct usage of this method:
     ///
     /// ```rust
-    /// use std::mem::MaybeUninit;
+    /// # extern crate maybe_uninit;
+    /// # fn main() {
+    /// use maybe_uninit::MaybeUninit;
     ///
     /// let mut x = MaybeUninit::<Vec<u32>>::uninit();
     /// unsafe { x.as_mut_ptr().write(vec![0,1,2]); }
@@ -357,16 +405,20 @@ impl<T: Copy> MaybeUninit<T> {
     /// let x_vec = unsafe { &mut *x.as_mut_ptr() };
     /// x_vec.push(3);
     /// assert_eq!(x_vec.len(), 4);
+    /// # }
     /// ```
     ///
     /// *Incorrect* usage of this method:
     ///
     /// ```rust,no_run
-    /// use std::mem::MaybeUninit;
+    /// # extern crate maybe_uninit;
+    /// # fn main() {
+    /// use maybe_uninit::MaybeUninit;
     ///
     /// let mut x = MaybeUninit::<Vec<u32>>::uninit();
     /// let x_vec = unsafe { &mut *x.as_mut_ptr() };
     /// // We have created a reference to an uninitialized vector! This is undefined behavior.
+    /// # }
     /// ```
     ///
     /// (Notice that the rules around references to uninitialized data are not finalized yet, but
@@ -394,22 +446,29 @@ impl<T: Copy> MaybeUninit<T> {
     /// Correct usage of this method:
     ///
     /// ```rust
-    /// use std::mem::MaybeUninit;
+    /// # extern crate maybe_uninit;
+    /// # fn main() {
+    /// use maybe_uninit::MaybeUninit;
+    /// use std::ptr::write;
     ///
     /// let mut x = MaybeUninit::<bool>::uninit();
-    /// unsafe { x.as_mut_ptr().write(true); }
+    /// unsafe { write(x.as_mut_ptr(), true); }
     /// let x_init = unsafe { x.assume_init() };
     /// assert_eq!(x_init, true);
+    /// # }
     /// ```
     ///
     /// *Incorrect* usage of this method:
     ///
     /// ```rust,no_run
-    /// use std::mem::MaybeUninit;
+    /// # extern crate maybe_uninit;
+    /// # fn main() {
+    /// use maybe_uninit::MaybeUninit;
     ///
     /// let x = MaybeUninit::<Vec<u32>>::uninit();
     /// let x_init = unsafe { x.assume_init() };
     /// // `x` had not been initialized yet, so this last line caused undefined behavior.
+    /// # }
     /// ```
     #[inline(always)]
     pub unsafe fn assume_init(self) -> T {
