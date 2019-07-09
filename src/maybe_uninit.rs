@@ -386,7 +386,7 @@ impl<T> MaybeUninit<T> {
     /// until they are, it is advisable to avoid them.)
     #[inline(always)]
     pub fn as_ptr(&self) -> *const T {
-        unsafe { &*self.value as *const T }
+        &*self.value as *const T
     }
 
     /// Gets a mutable pointer to the contained value. Reading from this pointer or turning it
@@ -429,7 +429,7 @@ impl<T> MaybeUninit<T> {
     /// until they are, it is advisable to avoid them.)
     #[inline(always)]
     pub fn as_mut_ptr(&mut self) -> *mut T {
-        unsafe { &mut *self.value as *mut T }
+        &mut *self.value as *mut T
     }
 
     /// Extracts the value from the `MaybeUninit<T>` container. This is a great way
