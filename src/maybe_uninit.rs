@@ -217,7 +217,8 @@ use std::mem::uninitialized;
 ///
 /// ```rust
 /// # extern crate maybe_uninit;
-/// # fn main() {
+/// # #[cfg(not(derive_copy))] fn main() {}
+/// # #[cfg(derive_copy)] fn main() {
 /// use maybe_uninit::MaybeUninit;
 /// use std::mem::{size_of, align_of};
 /// assert_eq!(size_of::<MaybeUninit<u64>>(), size_of::<u64>());
