@@ -1,7 +1,10 @@
 //use core::intrinsics;
+#[cfg(manually_drop)]
 use core::mem::ManuallyDrop;
 use core::ptr;
 use core::mem::uninitialized;
+#[cfg(not(manually_drop))]
+use manually_drop::ManuallyDrop;
 
 /// A wrapper type to construct uninitialized instances of `T`.
 ///
@@ -168,7 +171,8 @@ use core::mem::uninitialized;
 ///
 /// ```
 /// # extern crate maybe_uninit;
-/// # fn main() {
+/// # #[cfg(not(manually_drop))] fn main() {}
+/// # #[cfg(manually_drop)] fn main() {
 /// use maybe_uninit::MaybeUninit;
 /// use std::ptr;
 ///

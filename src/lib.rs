@@ -1,5 +1,8 @@
 #![no_std]
 
+#[cfg(not(manually_drop))]
+mod manually_drop;
+
 #[cfg(not(native_uninit))]
 mod maybe_uninit;
 

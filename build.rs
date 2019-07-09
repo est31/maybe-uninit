@@ -7,6 +7,9 @@ fn main() {
         Some(minor) => minor,
         None => return,
     };
+    if minor >= 20 {
+        println!("cargo:rustc-cfg=manually_drop");
+    }
     if minor >= 22 {
         println!("cargo:rustc-cfg=derive_copy");
     }
