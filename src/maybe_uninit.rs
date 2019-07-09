@@ -88,7 +88,8 @@ use core::mem::uninitialized;
 /// // a `MaybeUninit<T>` may be invalid, and hence this is not UB:
 /// let mut x = MaybeUninit::<&i32>::uninit();
 /// // Set it to a valid value.
-/// unsafe { write(x.as_mut_ptr(), &0); }
+/// const V: &'static i32 = &0;
+/// unsafe { write(x.as_mut_ptr(), V); }
 /// // Extract the initialized data -- this is only allowed *after* properly
 /// // initializing `x`!
 /// let x = unsafe { x.assume_init() };
