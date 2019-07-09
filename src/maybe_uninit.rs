@@ -240,11 +240,12 @@ use core::mem::uninitialized;
 /// remain `#[repr(transparent)]`. That said, `MaybeUninit<T>` will *always* guarantee that it has
 /// the same size, alignment, and ABI as `T`; it's just that the way `MaybeUninit` implements that
 /// guarantee may evolve.
-#[derive(Copy)]
+#[cfg_attr(derive_copy, derive(Copy))]
 pub struct MaybeUninit<T> {
     value: ManuallyDrop<T>,
 }
 
+#[cfg(derive_copy)]
 impl<T: Copy> Clone for MaybeUninit<T> {
     #[inline(always)]
     fn clone(&self) -> Self {

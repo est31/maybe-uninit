@@ -7,9 +7,13 @@ fn main() {
         Some(minor) => minor,
         None => return,
     };
+    if minor >= 22 {
+        println!("cargo:rustc-cfg=derive_copy");
+    }
     if minor >= 36 {
         println!("cargo:rustc-cfg=native_uninit");
     }
+
 }
 
 fn rustc_minor_version() -> Option<u32> {
