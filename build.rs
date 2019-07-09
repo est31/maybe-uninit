@@ -10,6 +10,9 @@ fn main() {
     if minor >= 22 {
         println!("cargo:rustc-cfg=derive_copy");
     }
+    if minor >= 28 {
+        println!("cargo:rustc-cfg=repr_transparent");
+    }
     if minor >= 36 {
         println!("cargo:rustc-cfg=native_uninit");
     }

@@ -242,6 +242,8 @@ use core::mem::uninitialized;
 /// the same size, alignment, and ABI as `T`; it's just that the way `MaybeUninit` implements that
 /// guarantee may evolve.
 #[cfg_attr(derive_copy, derive(Copy))]
+#[cfg_attr(repr_transparent, repr(transparent))]
+#[cfg_attr(not(repr_transparent), repr(C))]
 pub struct MaybeUninit<T> {
     value: ManuallyDrop<T>,
 }
