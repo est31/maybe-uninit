@@ -5,3 +5,15 @@ Therefore, the `MaybeUninit` union has been added to `std::mem` and `std::mem::u
 However, `MaybeUninit` has been added quite recently.
 Sometimes you might want to support older versions of Rust as well.
 Here is where `maybe-uninit` comes in: it supports rustc versions starting from 1.20.0.
+
+Sadly, a feature-complete implementation of `MaybeUninit` is not possible on stable Rust.
+Therefore, the library offers the guarantees of `MaybeUninit` in a staged fashion:
+
+* rust 1.36.0 onward: `MaybeUninit` implementation of Rust stable is being re-exported
+
+* rust 1.22.x - 1.35.0: No panicing on uninhabited types,
+  unsoundness when used with types like `bool` or enums.
+  However, there is protection from accidentially `Drop`ing e.g. during unwind!
+
+* rust 1.20.x - 1.21.x: No support for Copy/Clone of `MaybeUninit<T>`,
+  even if `T` impls `Copy` or even `Clone`.
