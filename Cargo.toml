@@ -1,6 +1,6 @@
 [package]
 name = "maybe-uninit"
-version = "0.5.0"
+version = "1.0.0"
 description = "MaybeUninit for friends of backwards compatibility"
 authors = ["est31 <MTest31@outlook.com>", "The Rust Project Developers"]
 license = "Apache-2.0 OR MIT"
