@@ -1,3 +1,6 @@
+#[cfg(not(no_std))]
+use std::ops::{Deref, DerefMut};
+#[cfg(no_std)]
 use core::ops::{Deref, DerefMut};
 
 #[repr(C)]

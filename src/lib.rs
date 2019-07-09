@@ -1,4 +1,4 @@
-#![no_std]
+#![cfg_attr(no_std, no_std)]
 
 #[cfg(not(manually_drop))]
 mod manually_drop;
