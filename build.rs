@@ -7,12 +7,6 @@ fn main() {
         Some(minor) => minor,
         None => return,
     };
-    if minor >= 6 {
-        println!("cargo:rustc-cfg=no_std");
-    }
-    if minor >= 20 {
-        println!("cargo:rustc-cfg=manually_drop");
-    }
     if minor >= 22 {
         println!("cargo:rustc-cfg=derive_copy");
     }
